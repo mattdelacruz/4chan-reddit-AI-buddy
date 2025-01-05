@@ -1,26 +1,22 @@
 {
-    "manifest_version": 3,
-    "name": "Chatbot",
-    "version": "1.0",
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; connect-src 'self' https://api.openai.com",
-    "permissions": ["storage"],
-    "host_permissions": ["<all_urls>"],
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["content/content.js"],
-        "css": ["content/content.css"]
-      }
-    ],
-    "action": {
-      "default_popup": "popup/popup.html",
-      "default_icon": "icons/icon.png"
-    },
-
-    "browser_specific_settings": {
-      "gecko": {
-        "id": "addon@example.com"
-      }
-    }
-  }
+  "manifest_version": 3,
+  "name": "Chatbot",
+  "version": "1.0",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://api.openai.com"
+  },
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["<all_urls>"],
   
+  "content_scripts": [
+    {
+      "matches": ["*://boards.4chan.org/*", "*://www.reddit.com/*"],
+      "js": ["content/reddit/reddit.js", "content/4chan/4chan.js", "content/chatbot.js"],
+      "css": ["content/content.css"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": "icons/icon.png"
+  }
+}

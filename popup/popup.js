@@ -1,10 +1,10 @@
 document.querySelector('#save-key').addEventListener('click', async () => {
-    const apiKey = document.querySelector('#api-key').value.trim();
+    let apiKey = document.querySelector('#api-key').value.trim();
     console.log(apiKey);
     if (apiKey) {
-        if (!apiKey.startsWith('sk-')) {
-            alert('Invalid API key format.');
-            return;
+        const prefix = 'sk-';
+        if (apiKey.startsWith(prefix)) {
+            apiKey = apiKey.substring(prefix.length);
         }
         try {
             await browser.storage.local.set({ openaiApiKey: apiKey });
@@ -13,5 +13,8 @@ document.querySelector('#save-key').addEventListener('click', async () => {
             console.error("Error saving API key:", error);
             alert("Failed to save API key. See console for details.");
         }
+    } else {
+        console.error("API key is empty.");
+        alert("Please enter an API key.");
     }
 });
