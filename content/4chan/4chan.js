@@ -1,6 +1,5 @@
-import * as chatbot from '../chatbot.js';
 const chatbot = new Chatbot();
-
+console.log("inside 4chan!");
 if (window.location.hostname === "boards.4chan.org") {
   document.addEventListener('click', (event) => {
     if (event.target.closest('.post.reply')) {

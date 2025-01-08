@@ -7,11 +7,10 @@
   },
   "permissions": ["storage", "activeTab"],
   "host_permissions": ["<all_urls>"],
-  
   "content_scripts": [
     {
       "matches": ["*://boards.4chan.org/*", "*://www.reddit.com/*"],
-      "js": ["content/reddit/reddit.js", "content/4chan/4chan.js", "content/chatbot.js"],
+      "js": ["content/chatbot.js","content/4chan/4chan.js", "content/reddit/reddit.js"],
       "css": ["content/content.css"]
     }
   ],

@@ -7,7 +7,7 @@ document.querySelector('#save-key').addEventListener('click', async () => {
             apiKey = apiKey.substring(prefix.length);
         }
         try {
-            await browser.storage.local.set({ openaiApiKey: apiKey });
+            await browser.storage.local.set({ OAApiKey: apiKey });
             console.log("API key saved successfully.");
         } catch (error) {
             console.error("Error saving API key:", error);

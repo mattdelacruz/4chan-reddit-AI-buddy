@@ -9,35 +9,36 @@ class Chatbot {
 		document.body.appendChild(this.avatar);
 
 		this.avatarChat = document.createElement('div');
-		this.avatarChat.id = 'avatar-chat';
+		this.avatarChat.id = 'avatarChat';
 		this.avatarChat.innerHTML = `
 			<div id="chat-box">
 			<div class="chat-messages" id="chatMessages"></div>
 			</div>
 		`;
-		document.body.appendChild(avatarChat)
+		document.body.appendChild(this.avatarChat)
 
 		this.avatarChat.style.display = 'none';
 
-		avatar.addEventListener('click', () => {
-			avatarChat.style.display = avatarChat.style.display === 'none' ? 'block' : 'none';
+		this.avatar.addEventListener('click', () => {
+			this.avatarChat.style.display = this.avatarChat.style.display === 'none' ? 'block' : 'none';
 		});
 	}
 
 	addMessage(message) {
-		const messages = document.getElementById('avatarChat');
+		const messages = document.getElementById('chatMessages');
+		messages.innerHTML = '';
 		const messageBubble = document.createElement('div');
+		console.log(message)
 		messageBubble.textContent = `${message}`;
 		messages.appendChild(messageBubble);
 		messages.scrollTop = messages.scrollHeight;
 	}
 
 	async getChatbotResponse(message) {
-		const result = await browser.storage.local.get(openaiApiKey);
-		const openaiApiKey = result[openaiApiKey];
+		const result = await browser.storage.local.get('OAApiKey');
+		const openaiApiKey = result['OAApiKey'];
 		if (!openaiApiKey) {
-			this.addMessage('Bot', 'Please configure your OpenAI API key in the settings.');
-			return;
+			return 'Please configure your OpenAI API key in the settings.';
 		}
 
 		try {
@@ -60,14 +61,16 @@ class Chatbot {
 			const data = await response.json();
 			return data.choices[0].message.content;
 		} catch (error) {
-			console.error('Error communicating with OpenAI:', error.message);
-			return 'Error fetching the response. Please check the console for details and try again later.';
+			return `Error communicating with OpenAI: ${error.message}`;
 		}
 	}
 
 	async getMessage(message) {
 		const botResponse = await this.getChatbotResponse(message);
 		this.addMessage(botResponse);
+		if (this.avatarChat.style.display === 'none') {
+			this.avatarChat.style.display = 'block';
+		}
 	}
 }
 
