@@ -48,15 +48,16 @@ const styles = {
 let currStyle = 'none';
 if (window.location.hostname === "boards.4chan.org") {
   document.addEventListener('click', (event) => {
+    console.log('click');
+    const postElement = event.target.closest('.post');
+    if (!postElement) return;
     let style = document.getElementById('styleSelector').value
     if (style !== currStyle) {
       changeStyle(style);
       currStyle = style;
     }
-    // TODO: Add functionality to grab the context of the thread based on OP post.
-    // TODO: Add functionality to grab the context of the thread based on reply post.
-    // TODO: Grab the picture of the post and determine if it's relevant to the conversation or not from the AI's perspective.
-    function processPost(postElement, type) {
+
+    async function processPost(postElement, type) {
       let postPictureUrl = null;
       const postMessage = postElement.querySelector('.postMessage');
       const postNumber = postElement.querySelector('.postInfo .postNum a').href.split('#p')[1];
@@ -77,7 +78,8 @@ if (window.location.hostname === "boards.4chan.org") {
         console.log(type + ':', restText);
         console.log('postPictureurl' + ':', postPictureUrl);
 
-        chatbot.getMessage(restText, postPictureUrl);
+        botResponse = await chatbot.getMessage(restText, postPictureUrl);
+        chatbot.addMessage(`>>${postNumber}\n` + botResponse);
       }
     }
 

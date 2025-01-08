@@ -37,8 +37,12 @@ class Chatbot {
 	// This function sends a message to the OpenAI chatbot and returns the response.
 	// Need to add functionality for other AI models.
 	async getChatbotResponse(message, imageUrl) {
-		const result = await browser.storage.local.get('OAApiKey');
-		const openaiApiKey = result['OAApiKey'];
+		return this.googleGemini(message, imageUrl);
+	}
+
+	async chatGPT4(message, imageUrl) {
+		const result = await browser.storage.local.get('CHATGPT_API_KEY');
+		const openaiApiKey = result['CHATGPT_API_KEY'];
 		if (!openaiApiKey) {
 			return 'Please configure your OpenAI API key in the settings.';
 		}
@@ -78,12 +82,69 @@ class Chatbot {
 		}
 	}
 
+	async googleGemini(message, imageUrl) {
+		const result = await browser.storage.local.get('GEMINI_API_KEY');
+		const geminiApiKey = result['GEMINI_API_KEY'];
+		if (!geminiApiKey) {
+			return 'Please configure your Google Gemini API key in the settings.';
+		}
+
+		const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + geminiApiKey;
+
+		try {
+			const body = {
+				"contents": [
+					{
+						"parts": [
+							{ "text": message }
+						]
+					}
+				],
+				"generationConfig": {
+					"maxOutputTokens": 75,
+					"temperature": 0.1
+				},
+				"systemInstruction": {
+					parts: [
+						{ text: 'You are a 4chan user, you must respond like a 4chan user and limit your responses to 150 characters or less' }
+					],
+				},
+			};
+
+			if (imageUrl) {
+				body.contents[0].parts.push({
+					"inlineData": {
+						"mimeType": "image/png",
+						"data": imageUrl
+					}
+				});
+			}
+
+			const response = await fetch(apiUrl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(body)
+			});
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+
+			const data = await response.json();
+			return data.candidates[0].content.parts[0].text;
+		} catch (error) {
+			return `Error communicating with Google Gemini: ${error.message}`;
+		}
+	}
+
 	async getMessage(message, imageUrl) {
 		const botResponse = await this.getChatbotResponse(message, imageUrl);
-		this.addMessage(botResponse);
 		if (this.avatarChat.style.display === 'none') {
 			this.avatarChat.style.display = 'block';
 		}
+		return botResponse;
 	}
 }
 

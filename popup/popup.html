@@ -7,19 +7,26 @@
 </head>
 <body>
   <div id="settings">
-    <label for="api-key">Enter your OpenAI API Key:</label>
-    <input type="text" id="api-key" placeholder="sk-..." />
-    <button id="save-key">Save Key</button>
+    <div class="ChatGPT-settings">
+      <label for="api-key">Enter your OpenAI API Key:</label>
+      <input type="text" id="chatgpt-api-key" placeholder="sk-..." />
+      <button id="chatgpt-save-key">Save Key</button>
+    </div>
+      <div class="Gemini-settings">
+        <label for="api-key">Enter your Google Gemini API Key:</label>
+        <input type="text" id="gemini-api-key" placeholder="AI..." />
+        <button id="gemini-save-key">Save Key</button>
+      </div>
+    </div>
   </div>
   <div id="ai-model">
     <label for="model">Select an AI Model:</label>
     <select id="model">
-      <option value="grok 2.0">Grok 2.0</option>
+      <option value="gemini">Gemini</option>
       <option value="gpt-4.0-turbo">GPT-4.0 Turbo</option>
     </select>
     <button id="save-model">Save Model</button>
   </div>
   <script src="popup.js"></script>
-
 </body>
 </html>

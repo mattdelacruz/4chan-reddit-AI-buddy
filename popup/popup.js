@@ -1,20 +1,30 @@
-document.querySelector('#save-key').addEventListener('click', async () => {
-    let apiKey = document.querySelector('#api-key').value.trim();
+const saveApiKey = async (keyId, storageKey, prefix = '') => {
+    const inputElement = document.querySelector(keyId);
+    let apiKey = inputElement?.value.trim();
+
     console.log(apiKey);
+
     if (apiKey) {
-        const prefix = 'sk-';
-        if (apiKey.startsWith(prefix)) {
+        if (prefix && apiKey.startsWith(prefix)) {
             apiKey = apiKey.substring(prefix.length);
         }
         try {
-            await browser.storage.local.set({ OAApiKey: apiKey });
-            console.log("API key saved successfully.");
+            await browser.storage.local.set({ [storageKey]: apiKey });
+            console.log(`${storageKey} saved successfully.`);
         } catch (error) {
-            console.error("Error saving API key:", error);
-            alert("Failed to save API key. See console for details.");
+            console.error(`Error saving ${storageKey}:`, error);
+            alert(`Failed to save ${storageKey}. See console for details.`);
         }
     } else {
-        console.error("API key is empty.");
-        alert("Please enter an API key.");
+        console.error(`${storageKey} is empty.`);
+        alert(`Please enter a valid ${storageKey}.`);
     }
+};
+
+document.querySelector('#chatgpt-save-key').addEventListener('click', () => {
+    saveApiKey('#chatgpt-api-key', 'CHATGPT_API_KEY', 'sk-');
+});
+
+document.querySelector('#gemini-save-key').addEventListener('click', () => {
+    saveApiKey('#gemini-api-key', 'GEMINI_API_KEY');
 });
