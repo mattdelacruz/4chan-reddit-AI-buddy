@@ -45,18 +45,24 @@ const styles = {
   },
 };
 
+let currStyle = 'none';
 if (window.location.hostname === "boards.4chan.org") {
-  const currStyle = document.getElementById('styleSelector').value
-  changeStyle(currStyle);
-
   document.addEventListener('click', (event) => {
-    // TODO: Add functionality to handle replies to posts.
-    // TODO: Add functionality to grab the post number of the post being replied to.
+    let style = document.getElementById('styleSelector').value
+    if (style !== currStyle) {
+      changeStyle(style);
+      currStyle = style;
+    }
     // TODO: Add functionality to grab the context of the thread based on OP post.
     // TODO: Add functionality to grab the context of the thread based on reply post.
     // TODO: Grab the picture of the post and determine if it's relevant to the conversation or not from the AI's perspective.
     function processPost(postElement, type) {
+      let postPictureUrl = null;
       const postMessage = postElement.querySelector('.postMessage');
+      const postNumber = postElement.querySelector('.postInfo .postNum a').href.split('#p')[1];
+      if (postElement.querySelector('.fileThumb')) {
+        postPictureUrl = postElement.querySelector('.fileThumb').href;
+      }
 
       if (postMessage) {
         const quoteLinks = postMessage.querySelectorAll('.quotelink');
@@ -69,7 +75,9 @@ if (window.location.hostname === "boards.4chan.org") {
 
         console.log('quote:', quoteLinkTexts);
         console.log(type + ':', restText);
-        chatbot.getMessage(restText);
+        console.log('postPictureurl' + ':', postPictureUrl);
+
+        chatbot.getMessage(restText, postPictureUrl);
       }
     }
 
@@ -86,9 +94,9 @@ if (window.location.hostname === "boards.4chan.org") {
 }
 
 document.getElementById('styleSelector').addEventListener('change', function () {
-  var selectedStyle = this.value;
-  console.log(selectedStyle)
+  let selectedStyle = this.value;
   changeStyle(selectedStyle);
+  currStyle = selectedStyle;
 });
 
 function changeStyle(selectedStyle) {

@@ -36,14 +36,25 @@ class Chatbot {
 
 	// This function sends a message to the OpenAI chatbot and returns the response.
 	// Need to add functionality for other AI models.
-	async getChatbotResponse(message) {
+	async getChatbotResponse(message, imageUrl) {
 		const result = await browser.storage.local.get('OAApiKey');
 		const openaiApiKey = result['OAApiKey'];
 		if (!openaiApiKey) {
 			return 'Please configure your OpenAI API key in the settings.';
 		}
+		let messages = [
+			{ role: 'user', content: message }
+		];
 
+		if (imageUrl) {
+			messages.push({
+				role: 'system',
+				content: imageUrl,
+				type: 'image_url'
+			});
+		}
 		try {
+
 			const response = await fetch('https://api.openai.com/v1/chat/completions', {
 				method: 'POST',
 				headers: {
@@ -52,7 +63,7 @@ class Chatbot {
 				},
 				body: JSON.stringify({
 					model: 'gpt-4',
-					messages: [{ role: 'user', content: message }],
+					messages: messages,
 				}),
 			});
 
@@ -67,8 +78,8 @@ class Chatbot {
 		}
 	}
 
-	async getMessage(message) {
-		const botResponse = await this.getChatbotResponse(message);
+	async getMessage(message, imageUrl) {
+		const botResponse = await this.getChatbotResponse(message, imageUrl);
 		this.addMessage(botResponse);
 		if (this.avatarChat.style.display === 'none') {
 			this.avatarChat.style.display = 'block';
