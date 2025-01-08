@@ -9,10 +9,10 @@ class Chatbot {
 		document.body.appendChild(this.avatar);
 
 		this.avatarChat = document.createElement('div');
-		this.avatarChat.id = 'avatarChat';
+		this.avatarChat.id = 'avatar-chat';
 		this.avatarChat.innerHTML = `
 			<div id="chat-box">
-			<div class="chat-messages" id="chatMessages"></div>
+			<div class="chat-messages" id="chat-messages"></div>
 			</div>
 		`;
 		document.body.appendChild(this.avatarChat)
@@ -25,7 +25,7 @@ class Chatbot {
 	}
 
 	addMessage(message) {
-		const messages = document.getElementById('chatMessages');
+		const messages = document.querySelector('#chat-messages');
 		messages.innerHTML = '';
 		const messageBubble = document.createElement('div');
 		console.log(message)
@@ -34,6 +34,8 @@ class Chatbot {
 		messages.scrollTop = messages.scrollHeight;
 	}
 
+	// This function sends a message to the OpenAI chatbot and returns the response.
+	// Need to add functionality for other AI models.
 	async getChatbotResponse(message) {
 		const result = await browser.storage.local.get('OAApiKey');
 		const openaiApiKey = result['OAApiKey'];
