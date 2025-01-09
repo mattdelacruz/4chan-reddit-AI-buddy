@@ -28,3 +28,14 @@ document.querySelector('#chatgpt-save-key').addEventListener('click', () => {
 document.querySelector('#gemini-save-key').addEventListener('click', () => {
     saveApiKey('#gemini-api-key', 'GEMINI_API_KEY');
 });
+
+document.querySelector('#save-model').addEventListener('click', () => {
+    const selectedModel = document.querySelector('.ai-model-selection').value;
+    browser.storage.local.set({ 'AI_MODEL': selectedModel })
+        .then(() => {
+            console.log('Model saved successfully');
+        })
+        .catch((error) => {
+            console.error('Error saving model:', error);
+        });
+});

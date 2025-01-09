@@ -4,7 +4,7 @@
   right: 20px;
   width: 80px;
   height: 80px;
-  background-image: url('avatar.png');
+  background-image: url('../icons/avatar.png');
   background-size: cover;
   cursor: pointer;
   z-index: 10000;

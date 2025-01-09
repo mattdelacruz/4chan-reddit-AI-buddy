@@ -10,7 +10,7 @@
   "content_scripts": [
     {
       "matches": ["*://boards.4chan.org/*", "*://www.reddit.com/*"],
-      "js": ["content/chatbot.js","content/4chan/4chan.js", "content/reddit/reddit.js"],
+      "js": ["ai_models/baseModel.js","ai_models/chatGPT4Model.js", "ai_models/geminiModel.js","content/chatbot.js","4chan/4chan.js", "4chan/4chanStyle.js", "reddit/reddit.js"],
       "css": ["content/content.css"]
     }
   ],
