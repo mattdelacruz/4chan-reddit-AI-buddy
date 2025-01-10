@@ -1,10 +1,9 @@
-
 class ChatGPT4Model extends BaseAIModel {
     constructor() {
-        super('CHATGPT_API_KEY', 'https://api.openai.com/v1/chat/completions');
+        super('CHATGPT_API_KEY');
     }
 
-    async generateResponse(message, imageUrl) {
+    async generateResponse(message, imageUrl = null) {
         const openaiApiKey = await this.getApiKey();
         if (!openaiApiKey) {
             return 'Please configure your OpenAI API key in the settings.';
@@ -17,27 +16,34 @@ class ChatGPT4Model extends BaseAIModel {
         if (imageUrl) {
             messages.push({
                 role: 'system',
-                content: imageUrl,
-                type: 'image_url'
+                content: [
+                    {
+                        type: "image_url",
+                        image_url: { url: imageUrl }
+                    }
+                ],
             });
         }
 
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${openaiApiKey}`,
-            },
-            body: JSON.stringify({
-                model: 'gpt-4',
-                messages: messages,
-            }),
+        const body = {
+            model: 'gpt-4',
+            messages: messages,
         };
 
-        const response = await this.makeAPICall(requestOptions);
-        if (response.error) {
-            return `Error communicating with OpenAI: ${response.error}`;
+        try {
+            const response = await browser.runtime.sendMessage({
+                action: "makeAPICall",
+                model: "gpt-4.0-turbo",
+                apiKey: openaiApiKey,
+                body: body
+            });
+
+            if (response.error) {
+                throw new Error(response.error);
+            }
+            return response.data.choices[0].message.content;
+        } catch (error) {
+            return `Error communicating with OpenAI: ${error.message}`;
         }
-        return response.choices[0].message.content;
     }
 }

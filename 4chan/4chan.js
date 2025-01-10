@@ -1,7 +1,5 @@
 const systemInstruction = `You are a 4chan user, you must respond like a 4chan user and limit your responses to 150 characters or less.`;
-
 const chatbot = new Chatbot(systemInstruction);
-
 let threadContext = null;
 let currThread = null;
 let isNewThread = false;
@@ -61,18 +59,19 @@ async function processPost(postElement, type) {
   }
 }
 
-if (window.location.hostname === "boards.4chan.org") {
-  document.addEventListener('click', (event) => {
-    const postElement = event.target.closest('.post');
-    if (!postElement) return;
+document.addEventListener('click', (event) => {
+  const postElement = event.target.closest('.post');
+  if (!postElement) return;
 
-    const opPost = event.target.closest('.post.op');
-    const replyPost = event.target.closest('.post.reply');
+  if (event.target.closest('.fileThumb')) {
+    return;
+  }
+  const opPost = event.target.closest('.post.op');
+  const replyPost = event.target.closest('.post.reply');
 
-    if (opPost) {
-      processPost(opPost, 'op');
-    } else if (replyPost) {
-      processPost(replyPost, 'reply');
-    }
-  });
-}
+  if (opPost) {
+    processPost(opPost, 'op');
+  } else if (replyPost) {
+    processPost(replyPost, 'reply');
+  }
+});

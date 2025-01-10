@@ -3,17 +3,44 @@
   "name": "Chatbot",
   "version": "1.0",
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://api.openai.com"
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://api.openai.com https://generativelanguage.googleapis.com;"
   },
-  "permissions": ["storage", "activeTab"],
-  "host_permissions": ["<all_urls>"],
-  "content_scripts": [
-    {
-      "matches": ["*://boards.4chan.org/*", "*://www.reddit.com/*"],
-      "js": ["ai_models/baseModel.js","ai_models/chatGPT4Model.js", "ai_models/geminiModel.js","content/chatbot.js","4chan/4chan.js", "4chan/4chanStyle.js", "reddit/reddit.js"],
-      "css": ["content/content.css"]
-    }
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false,
+    "type": "module"
+  },
+  "permissions": ["storage", "activeTab", "scripting","https://api.openai.com/*"],
+  "host_permissions": [
+  "*://www.reddit.com/*",
+  "*://boards.4chan.org/*"
   ],
+"content_scripts": [
+  {
+    "matches": ["*://www.reddit.com/*"],
+    "js": [
+      "ai_models/baseModel.js",
+      "ai_models/chatGPT4Model.js",
+      "ai_models/geminiModel.js",
+      "content/chatbot.js",
+      "reddit/reddit.js",
+      "reddit/redditStyle.js"
+    ],
+    "css": ["content/content.css"]
+  },
+  {
+    "matches": ["*://boards.4chan.org/*"],
+    "js": [
+      "ai_models/baseModel.js",
+      "ai_models/chatGPT4Model.js",
+      "ai_models/geminiModel.js",
+      "content/chatbot.js",
+      "4chan/4chan.js",
+      "4chan/4chanStyle.js"
+    ],
+    "css": ["content/content.css"]
+  }
+],
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": "icons/icon.png"

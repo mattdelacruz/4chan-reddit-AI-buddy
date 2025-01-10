@@ -1,7 +1,6 @@
 class BaseAIModel {
-    constructor(apiKeyStorageKey, apiUrl) {
+    constructor(apiKeyStorageKey) {
         this.apiKeyStorageKey = apiKeyStorageKey;
-        this.apiUrl = apiUrl;
     }
 
     async getApiKey() {
@@ -9,15 +8,26 @@ class BaseAIModel {
         return result[this.apiKeyStorageKey];
     }
 
-    async makeAPICall(requestOptions) {
+    async getImageBase64(imageUrl) {
         try {
-            const response = await fetch(this.apiUrl, requestOptions);
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`;
+            const response = await fetch(proxyUrl);
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return await response.json();
+
+            const blob = await response.blob();
+
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result.split(",")[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
         } catch (error) {
-            return { error: error.message };
+            console.error('Error converting image to Base64 with proxy:', error);
+            return null;
         }
     }
 }

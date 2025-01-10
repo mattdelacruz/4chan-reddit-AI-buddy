@@ -40,11 +40,32 @@ class Chatbot {
 		}
 	}
 
-	async getChatbotResponse(message, imageUrl, threadContext = null, isNewThread = true, model = 'gemini') {
-		if (this.models.hasOwnProperty(model)) {
-			return await this.models[model].generateResponse(message, imageUrl, threadContext, isNewThread);
-		} else {
-			return `Error: ${model} is not support or configured.`;
+	async getChatbotResponse(message, imageUrl = null, threadContext = null, isNewThread = true, model) {
+		let loadingTimeout;
+		try {
+			loadingTimeout = setTimeout(() => {
+				this.addMessage('Chotto matte kudasai...');
+			}, 5000);
+
+			if (this.models.hasOwnProperty(model)) {
+				const response = await this.models[model].generateResponse(message, imageUrl, threadContext, isNewThread);
+				clearTimeout(loadingTimeout);
+
+				this.addMessage(response);
+				return response;
+			} else {
+				clearTimeout(loadingTimeout);
+
+				const error = `Error: ${model} is not supported or configured.`;
+				this.addMessage(error);
+				return error;
+			}
+		} catch (error) {
+			clearTimeout(loadingTimeout);
+
+			const errorMessage = `Error: ${error.message}`;
+			this.addMessage(errorMessage);
+			return errorMessage;
 		}
 	}
 }

@@ -1,19 +1,17 @@
 
 class GeminiModel extends BaseAIModel {
     constructor(systemInstruction = '') {
-        super('GEMINI_API_KEY', 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent');
+        super('GEMINI_API_KEY');
         this.systemInstruction = systemInstruction;
     }
 
-    async generateResponse(message, imageUrl, threadContext = null, isNewThread = true) {
+    async generateResponse(message, imageUrl = null, threadContext = null, isNewThread = true) {
         const geminiApiKey = await this.getApiKey();
         if (!geminiApiKey) {
             return 'Please configure your Google Gemini API key in the settings.';
         }
 
-        const baseInstruction = { text: this.systemInstruction };
-
-        let body = {
+        const body = {
             "contents": [
                 {
                     "parts": [
@@ -26,46 +24,30 @@ class GeminiModel extends BaseAIModel {
                 "temperature": 0.1
             },
             "systemInstruction": {
-                "parts": [baseInstruction],
+                "parts": [{ "text": this.systemInstruction }],
             },
         };
 
-        if (isNewThread) {
-            body.systemInstruction.parts = [baseInstruction];
-        } else if (threadContext) {
-            body.systemInstruction.parts.push({ text: `Context: ${threadContext}` });
+        if (!isNewThread && threadContext) {
+            body.systemInstruction.parts.push({ "text": `Context: ${threadContext}` });
         }
-        // Can only be used for the pro version
-        // if (imageUrl) {
-        //     const base64Image = await this.getImageBase64(imageUrl);
-        //     body.contents[0].parts.push({
-        //         "inlineData": {
-        //             "mimeType": "image/png",
-        //             "data": base64Image
-        //         }
-        //     });
-        // }
 
         try {
-            const response = await fetch(`${this.apiUrl}?key=${geminiApiKey}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body)
+            const response = await browser.runtime.sendMessage({
+                action: "makeAPICall",
+                model: "gemini",
+                apiKey: geminiApiKey,
+                body: body
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            if (response.error) {
+                throw new Error(response.error);
             }
-
-            const data = await response.json();
-            return data.candidates[0].content.parts[0].text;
+            return response.data.candidates[0].content.parts[0].text;
         } catch (error) {
             return `Error communicating with Google Gemini: ${error.message}`;
         }
     }
-
 
 
 
