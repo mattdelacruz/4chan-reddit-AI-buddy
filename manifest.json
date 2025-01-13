@@ -6,7 +6,8 @@
     "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://api.openai.com https://generativelanguage.googleapis.com;"
   },
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["background/background-script.js"],
+    "service_worker": "background/background-script.js",
     "persistent": false,
     "type": "module"
   },
@@ -19,24 +20,24 @@
   {
     "matches": ["*://www.reddit.com/*"],
     "js": [
-      "ai_models/baseModel.js",
-      "ai_models/chatGPT4Model.js",
-      "ai_models/geminiModel.js",
+      "ai_models/base-model.js",
+      "ai_models/chatGPT4-model.js",
+      "ai_models/gemini-model.js",
       "content/chatbot.js",
       "reddit/reddit.js",
-      "reddit/redditStyle.js"
+      "reddit/reddit-style.js"
     ],
     "css": ["content/content.css"]
   },
   {
     "matches": ["*://boards.4chan.org/*"],
     "js": [
-      "ai_models/baseModel.js",
-      "ai_models/chatGPT4Model.js",
-      "ai_models/geminiModel.js",
+      "ai_models/base-model.js",
+      "ai_models/chatGPT4-model.js",
+      "ai_models/gemini-model.js",
       "content/chatbot.js",
       "4chan/4chan.js",
-      "4chan/4chanStyle.js"
+      "4chan/4chan-style.js"
     ],
     "css": ["content/content.css"]
   }
@@ -44,5 +45,11 @@
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": "icons/icon.png"
+  },
+  "browser_specific_settings": {
+  "gecko": {
+    "id": "test@test.com"
   }
+}
+
 }

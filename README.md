@@ -1,4 +1,4 @@
-# 4chan and Reddit AI Helper
+# 4chan and Reddit AI Buddy
 
 _A Firefox extension that summarizes comments on a given 4chan thread or a Reddit post all powered by Google's Gemini_
 

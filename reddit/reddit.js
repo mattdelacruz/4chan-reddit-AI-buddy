@@ -9,12 +9,14 @@ document.addEventListener('click', async (event) => {
     if (commentContainer) {
         commentText = processCommentContainer(commentContainer);
         if (commentText) {
-            await processComment(commentText);
+            const shredditTitleElement = document.querySelector('shreddit-title')
+            const title = shredditTitleElement.getAttribute('title')
+            await processComment(commentText, title);
         }
     }
 });
 
-async function processComment(comment) {
+async function processComment(comment, title) {
     try {
         const getModel = await browser.storage.local.get('AI_MODEL');
         const currModel = getModel['AI_MODEL'];
@@ -22,7 +24,7 @@ async function processComment(comment) {
             chatbot.addMessage('Please select an AI model in the settings.');
             return;
         }
-        const botResponse = await chatbot.getChatbotResponse(comment, null, null, false, model = currModel);
+        const botResponse = await chatbot.getChatbotResponse(comment, null, title, false, model = currModel);
 
         chatbot.addMessage(botResponse);
     } catch (error) {

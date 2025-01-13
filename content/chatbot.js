@@ -1,10 +1,11 @@
 class Chatbot {
 	constructor(systemInstruction = '') {
 		this.initializeUI();
-		this.models = {
-			'gemini': new GeminiModel(systemInstruction),
-			'gpt-4.0-turbo': new ChatGPT4Model()
+		this.modelFactories = {
+			'gemini': () => new GeminiModel(systemInstruction),
+			'gpt-4.0-turbo': () => new ChatGPT4Model()
 		};
+		this.models = {}; // Store initialized models here
 	}
 
 	initializeUI() {
@@ -15,11 +16,11 @@ class Chatbot {
 		this.avatarChat = document.createElement('div');
 		this.avatarChat.id = 'avatar-chat';
 		this.avatarChat.innerHTML = `
-			<div id="chat-box">
-			<div class="chat-messages" id="chat-messages"></div>
-			</div>
-		`;
-		document.body.appendChild(this.avatarChat)
+            <div id="chat-box">
+            <div class="chat-messages" id="chat-messages"></div>
+            </div>
+        `;
+		document.body.appendChild(this.avatarChat);
 
 		this.avatarChat.style.display = 'none';
 
@@ -40,6 +41,17 @@ class Chatbot {
 		}
 	}
 
+	async loadModel(model) {
+		if (!this.models[model]) {
+			if (this.modelFactories.hasOwnProperty(model)) {
+				this.models[model] = this.modelFactories[model](); // Instantiate the model
+			} else {
+				throw new Error(`Model ${model} is not supported or configured.`);
+			}
+		}
+		return this.models[model];
+	}
+
 	async getChatbotResponse(message, imageUrl = null, threadContext = null, isNewThread = true, model) {
 		let loadingTimeout;
 		try {
@@ -47,19 +59,12 @@ class Chatbot {
 				this.addMessage('Chotto matte kudasai...');
 			}, 5000);
 
-			if (this.models.hasOwnProperty(model)) {
-				const response = await this.models[model].generateResponse(message, imageUrl, threadContext, isNewThread);
-				clearTimeout(loadingTimeout);
+			const selectedModel = await this.loadModel(model);
+			const response = await selectedModel.generateResponse(message, imageUrl, threadContext, isNewThread);
+			clearTimeout(loadingTimeout);
 
-				this.addMessage(response);
-				return response;
-			} else {
-				clearTimeout(loadingTimeout);
-
-				const error = `Error: ${model} is not supported or configured.`;
-				this.addMessage(error);
-				return error;
-			}
+			this.addMessage(response);
+			return response;
 		} catch (error) {
 			clearTimeout(loadingTimeout);
 
@@ -69,5 +74,3 @@ class Chatbot {
 		}
 	}
 }
-
-
