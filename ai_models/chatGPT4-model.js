@@ -4,6 +4,7 @@ class ChatGPT4Model extends BaseAIModel {
     }
 
     async generateResponse(message, imageUrl = null) {
+        // not tested properly as I'm too broke for the ChatGPT API
         const openaiApiKey = await this.getApiKey();
         if (!openaiApiKey) {
             return 'Please configure your OpenAI API key in the settings.';

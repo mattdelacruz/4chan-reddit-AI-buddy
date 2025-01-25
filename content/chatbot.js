@@ -5,7 +5,7 @@ class Chatbot {
 			'gemini': () => new GeminiModel(systemInstruction),
 			'gpt-4.0-turbo': () => new ChatGPT4Model()
 		};
-		this.models = {}; // Store initialized models here
+		this.models = {};
 	}
 
 	initializeUI() {
@@ -44,7 +44,7 @@ class Chatbot {
 	async loadModel(model) {
 		if (!this.models[model]) {
 			if (this.modelFactories.hasOwnProperty(model)) {
-				this.models[model] = this.modelFactories[model](); // Instantiate the model
+				this.models[model] = this.modelFactories[model]();
 			} else {
 				throw new Error(`Model ${model} is not supported or configured.`);
 			}

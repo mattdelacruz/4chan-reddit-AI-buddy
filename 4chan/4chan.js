@@ -63,9 +63,8 @@ document.addEventListener('click', (event) => {
   const postElement = event.target.closest('.post');
   if (!postElement) return;
 
-  if (event.target.closest('.fileThumb')) {
-    return;
-  }
+  if (event.target.closest('.fileThumb')) return;
+
   const opPost = event.target.closest('.post.op');
   const replyPost = event.target.closest('.post.reply');
 
