@@ -1,4 +1,3 @@
-
 class GeminiModel extends BaseAIModel {
     constructor(systemInstruction = '') {
         super('GEMINI_API_KEY');
@@ -31,8 +30,7 @@ class GeminiModel extends BaseAIModel {
         if (!isNewThread && threadContext) {
             body.systemInstruction.parts.push({ "text": `Context: ${threadContext}` });
         }
-        // imageUrl processing goes here, currently not implemented
-        // as it only works for Gemini Pro
+
         try {
             const response = await browser.runtime.sendMessage({
                 action: "makeAPICall",
@@ -49,7 +47,4 @@ class GeminiModel extends BaseAIModel {
             return `Error communicating with Google Gemini: ${error.message}`;
         }
     }
-
-
-
 }
